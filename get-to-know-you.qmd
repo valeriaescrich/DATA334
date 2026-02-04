@@ -1,0 +1,37 @@
+---
+title: "get-to-know-you"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+
+# 1.What is your name and what is your class year (first-year, sophomore, junior, senior)?
+My name is Valeria Escrich and i am a junior.
+
+# 2.What is/are your major(s) and minor(s), either actual or intended?
+I am majoring in Data Science and Minoring in Theatre
+
+# 3.Why did you decide to take this course?
+I have always being inclined in the finding creative ways to present data. Data 234 sparked an interest in using R and graphing complex data sets.
+
+# 4.In what semester and year did you take DATA/STAT 234?
+Last semester!
+
+# 5.Have you used Git before? If so, in what context?
+Never used it, just read about it.
+
+# 6.What is your hometown: city, state, country?
+San Salvador, El Salvador
+
+# 7.Do you play a sport on campus? If so, what sport? If not, what is an activity that you do on or off-campus?
+Not really an athlete. I like doing yoga when waking up.
+
+# 8.What is your favorite TV show or movie or band/musical artist?
+I really like latino and afro beats. My favorite artist now is Beele. But if im feeling like listening to music in English I enjoy Lana del Rey and Billie Eilish.
+
+# 9.Tell me something about yourself.
+I am really interested in mixology. I hope someday in my life I can make it a hobby of mine.
+
+# 10.What are your expectations for this class and/or what do you hope to gain from this class?
+Learn cool, fun and interesting ways to make graphs. Super simple thing but I am very curious to see if we can add images in our graphs...

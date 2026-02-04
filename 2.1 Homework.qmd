@@ -1,0 +1,25 @@
+---
+title: "2.1 Homework"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+Using either Anscombe’s quartet or the income/voter turnout graph as an example, explain why it’s valuable to look at data graphically instead of examining data only with summary statistics.
+Looking at data in a graph is crucial because sometimes summarized statistics can possibly hide what is actually happening with the data. With the Anscombe's quarter, the four datasets have the same means, correlations and regression lines, making us expect that they would all have the same relationship. Once they are graphed, each data sets is telling a different story, one fo them has a clear trend line, another one is curved and the other ones are completely driven by outliers. The plot reveals patterns and much more info that the numbers itself cannot tell. This proves that visualization is essential to observe relationships, outliers and overall structure. 
+
+Take a look at the bar plot in Figure 1.4. Give a couple of reasons for why the chart has “bad taste.”
+It is considered to have bad taste because this chart has lots of unnecessary visual decorations that makes the information hard to read, making the whole point of the chart fail. The 3D effect is affecting perception, meaning it is hard to read. The textured background, shadows and bold colors are not supporting the chart or adding any information, instead it looks more cluttered. This chart is not prioritizing clarity and easy understanding.
+
+Why might you not always want to maximize the data-to-ink ratio when making charts?
+Because taking off a lot of visual context can make a chart harder to understand. As discussed removing unnecessary decorations is useful, but other elements like labels help the audience understand the data. Some research exposes that extremely minimalist charts can demand more from the human brain, since they have to decode what is going on. The small amount of extra ink can create great impact in exposing our data more clear, readable and more remarkably.
+
+What do the authors mean when they say that “relative comparisons need a stable baseline” and how does that affect your ability to interpret the coloured stacked bar plot in Figure 1.11?
+The author means that to accurately compare values, these values need to be measured from the same starting point. Figure 1.11 is hard to compare sizes or trends over time because only the bottom bar has a consistent baseline, the stacked ones change over year. Changes in this plot can be provoked by changes in the categories itself or the ones beneath it. This plot is hard to interpret and compare the individual categories.
+
+What are two key takeaways from Sections 1.1 and 1.2?
+1. We NEED to look at the data not only summarize it. Anscombe's quartet show that datasets with identical summaries can have different relationships. 
+2. Visual design choices are crucial. Excessive decorations and simensions distort values, but also make it memorable, like the Montrous Costs. It is a matter to find the perfect balance. 
+
+What is one question that you have about the reading?
+How to find the perfect balance between simplicity and clarity but at the same time making it memorable and fun to look at?

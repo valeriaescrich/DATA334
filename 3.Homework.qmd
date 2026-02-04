@@ -1,0 +1,32 @@
+---
+title: "3 Homework"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+What is the difference between a colour’s hue and a colour’s intensity?
+Hue refers to the type of color, this could be grren, red or blue. In the other hand, colours intensity is how vivid the colors look.
+
+Think of an example where you would want to use a sequential colour scale that’s different from the one given in the text. Then, think of examples where you would use a diverging colour scale and an unordered colour scale.
+A good idea could be pollution, in any space for example water or air, making low a very light color, and high a dark one. I would use a diverging scale for values around an important statistic, like average weather, and an unordered scale for those categories that do not require order, like religions, political parties, regions. 
+
+Some gestalt inferences take priority over others. Using Figure 1.21, give an example of a gestalt inference that takes priority over another one.
+We can observe how connecrtion takes priority over similarity. Even when the shapes are different, the elements that are connected by a line are perceived as related and that they belong together. The connection is stronger that similarity in color or shapes.
+
+“Bar charts are better than Pie charts for visualizing a single categorical variable.” Explain how results shown in Figure 1.23 support this claim.
+Since we have bars with length there is a lower error than circles with areas and angles. Pie charts shows values with angles, making the audience misjudge, bar charts allow accurate comparisons of single categorical variables.
+
+Suppose you have a scatterplot of height on the y-axis vs. weight on the x-axis for people born in Canada, Mexico, and the United States. You now want to explore whether the relationship is different for people born in the United States, people born in Canada, and people born in Mexico. Should you use different shapes to distinguish the three countries or should you use different colours? Explain using either Figure 1.24 or 1.25.
+Different colors seem more effective than shapes. Since country of birth is not ordered and is a categorical value, the color hue from shape 1.25 makes it more effective visually than the shapes and distinguishing groups. The color differences can be perceived quickly in a scatterplot compared to shape changes.
+
+When might you use the left-side of Figure 1.27 to show the law school data? When might you use the right-side of Figure 1.27 to show the law school data?
+The left side plot when we are trying to highlight the abrupt and weird decline there is recently in the timeline, since it would help make the drop look more dramatic. The right side plot when we want to have less missleading and more conservative approach, seem more appropiate for a general audience. 
+
+Summary: What are two takeaways from Sections 1.3-1.7?
+Perception is so relative! elements can make values look different.
+
+Comparing is more accurate with position and length on common scales, and adding elements can overload our audience.
+
+What is one question that you have about the reading?
+How can we make a smart decision on using a uniform palette or a palette that adds more value and understanding, for example using red = WARNING, DANGER! specially for audiences who prefer colors?

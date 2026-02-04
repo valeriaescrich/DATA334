@@ -1,0 +1,29 @@
+---
+title: "Coding Assesment 1"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+## Question 1. 
+```{r}
+library(tidyverse)
+diamonds
+```
+
+```{r}
+ggplot(data = diamonds, aes(x = price, colour = cut)) +
+    geom_histogram(colour = "black", fill = "aquamarine", bins = 17) +
+    facet_wrap(~cut)
+```
+
+## Question 2. 
+```{r}
+ggplot(data = diamonds, aes(x = price, colour = cut)) +
+    geom_histogram(colour = "black", fill = "aquamarine", bins = 17) +
+    facet_wrap(~cut) +
+  theme(plot.background = element_rect("tomato"),
+        axis.text = element_text(colour = "blue4"))
+
+```
+

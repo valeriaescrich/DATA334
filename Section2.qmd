@@ -1,0 +1,172 @@
+---
+title: "Section 2"
+format: html
+---
+
+## Section 2.2 -> grammar of graphics 
+DATA: data frame to plot 
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+theme_set(theme_minimal())
+penguins
+```
+
+
+<stat>
+```{r}
+ggplot(data = penguins, aes(x = species)) +
+  geom_bar(stat = "count") ## don't need stat = "count" because it's the default.
+```
+
+```{r}
+penguinsSum = penguins |> 
+  group_by(species) |>
+  summarise(n_species = n())
+
+
+ggplot(data = penguinsSum, aes(x = species, y = n_species)) +
+  geom_bar(stat = "identity") 
+## before we used to use geom column
+## Uses the raw y values provided in the data frame as the bar heights.
+```
+
+
+<position>
+```{r}
+ggplot(data = penguins, aes(x = species, fill = sex)) +
+  geom_bar(position = "stack") + ## don't need "stack" because it's default
+  scale_fill_viridis_d()
+
+
+### helps to prevent stacking and helps comparing
+ggplot(data = penguins, aes(x = species, fill = sex)) +
+  geom_bar(position = "dodge") + ## don't need "stack" because it's default
+  scale_fill_viridis_d()
+```
+
+<COORDINATE_FUNCTION>:
+
+```{r}
+ggplot(data = penguins, aes(x = species)) +
+  geom_bar() +
+  coord_polar()
+```
+
+
+Exercise 1. The following scatterplot explicitly specifies 3 of the 7 grammar of graphics parameters.
+
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point() 
+```
+
+The other 4 parameters are given default values: <FACET> is facet_null() (which is added as another layer to the plot), <STAT> is "identity" (an argument of geom_point()), <POSITION> is "identity" (an argument of geom_point()), and <COORDINATE_FUNCTION> is coord_cartesian() (which is added as another layer to the plot). Modify the plot so that it explicitly uses the default values for the other 4 parameters.
+
+
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  facet_null()+
+  geom_point(stat = "identity", position = "identity")+
+  coord_cartesian() 
+```
+
+Your Turn
+Exercise 6. Construct a bar plot that gives the 15 most popular major-minor combinations are at SLU for students graduating within the last 9 years (from 2017 through 2025). To do, examine the data set below, which was obtained from our institutional research office. After the pivoting steps are completed, each row corresponds to an individual major-minor combination. If a student had two majors and one minor, then they appear as two rows in the data set (one for each unique major-minor combination).
+
+In your graph, you should explicitly uses all 7 grammar of graphics parameters (you may set some of these parameters to be the default values, but you should do so explicitly). The purpose of this question is to both review more DATA/STAT 234 and to practice using the 7 parameters in the grammar of graphics.
+```{r}
+library(tidyverse)
+df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/slu_graduates.csv") 
+
+## fixes error in the data
+df <- df |> mutate(across(everything(),
+                          .fns = ~replace(., . ==  "STATS" , "STAT")))
+
+## turns the data set from 1 row per graduating student
+## to 1 row per major-minor combination so that students
+## with more than one major-minor combo take up multiple
+## rows
+df_major_minor <- df |> filter(!is.na(minor1)) |> 
+  pivot_longer(starts_with("major"), names_to = "major_number",
+               values_to = "major") |>
+  filter(!is.na(major)) |>
+  pivot_longer(starts_with("minor"), names_to = "minor_number",
+               values_to = "minor") |>
+  filter(!is.na(minor))
+
+major_minor15 = df_major_minor |> 
+  group_by(major, minor) |>
+  summarise(n_total=n()) |>
+  ungroup()|>
+  arrange(desc(n_total)) |>
+  slice (1:15) |>
+  unite("major_minor", c(major, minor), sep = "-") |>
+  mutate(major_minor = fct_reorder(major_minor, n_total))
+
+ggplot(data = major_minor15, aes(x = n_total, y = major_minor)) +
+  geom_bar(stat = "identity", position = "identity") +
+  coord_cartesian() +
+  facet_null()
+
+```
+
+# Section 2.3 -> Your Turn
+Exercise 1. Make another plot of bill_length_mm with a different geom that is used for a single quantitative variable.
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm)) +
+  geom_boxplot(stat = "identity", position = "identity")+
+  coord_flip()
+```
+
+Exercise 2. Create a plot of a quantitative and a categorical variable in the penguins data set.
+```{r}
+
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  facet_null()+
+  geom_jitter(stat = "identity", position = "identity")+
+  coord_cartesian()
+```
+
+Exercise 3. Modify the frequency plot made with geom_freqpoly() to use colour in two different ways:
+
+change the colour of the line to any colour that R knows. A list of some colours can be found at this link.
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm)) +
+  geom_freqpoly(colour = "hotpink")
+
+ggplot(data = penguins, aes(x = bill_length_mm)) +
+  geom_freqpoly(aes(colour = species))
+```
+
+
+add a colour aesthetic to make three different frequency lines, one for each species of penguin.
+
+Hint
+
+Exercise 4. Recall that aes() aesthetics specified within the ggplot() function directly are called global aesthetics because every other <GEOM> will use them (unless specifically overridden) while aes() specified within a particular <GEOM> are called local aesthetics because only that particular <GEOM> will use them.
+
+Modify the scatterplot and smoother so that
+
+the points are coloured by species, but there is only one smoother instead of three.
+
+there are three different coloured smoothers (one for each species) but the points are all the same colour.
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point(aes(colour = species)) +
+  geom_smooth(aes(x = bill_length_mm))
+```
+
+Exercise 5. Create two different graphs that differ only by 1 of the 7 grammar of graphics parameters. Then, show your two graphs (but not your code) to a partner and see if they can identify which graphics parameter has been modified.
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_violin(aes(colour = species)) 
+```
+
+
+```{r}
+ggplot(data = penguins, aes(x = bill_length_mm, colour = species)) +
+  geom_histogram(colour = "black", fill = "white", bins = 17) 
+```
+    

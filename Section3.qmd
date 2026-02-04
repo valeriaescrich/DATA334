@@ -1,0 +1,109 @@
+---
+title: "Section3"
+format: html
+---
+
+```{r}
+hpi_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/hpi-tidy.csv")
+hpi_df
+
+ggplot(data = hpi_df, aes(x = Region, y = HappyPlanetIndex)) +
+  geom_jitter(width = 0.1)+
+  theme_minimal() +
+  coord_flip()
+
+# just making the mean 
+
+hpi_mean = hpi_df|>
+  group_by(Region) |>
+  summarise(mean = mean(HappyPlanetIndex))
+
+ggplot(data = hpi_mean, aes(x = Region, y = mean)) +
+  geom_jitter(width = 0.1)+
+  theme_minimal() +
+  coord_flip()
+
+
+
+ggplot(data = hpi_df, aes(x = Region, y = HappyPlanetIndex)) +
+  geom_jitter(width = 0.1)+
+  theme_minimal() +
+  coord_flip()+
+  geom_point(data = hpi_mean, aes(y = mean),
+             shape = 8, colour = "green", size = 3)+
+  labs(caption = "The asterisks mark the happy planet index")
+
+
+# bar plot of the top 10 showing the region for each country on the plot 
+
+top10 = hpi_df|>
+  arrange(desc(HappyPlanetIndex)) |>
+  slice(1:10) |>
+  mutate(Country = fct_reorder(Country, HappyPlanetIndex))
+top10
+
+ggplot(data = top10, aes(x = HappyPlanetIndex, y= Country,
+                         fill = Region))+
+  geom_col()+
+  scale_fill_viridis_d()
+
+# a map would be even better, soon to check out next class!
+```
+
+In example 7, qualitative there is no ordering to the species that make sense for sequential or diverging.
+
+scale_color_brewer() is for colouring by a categorical variable <chr> or <fct>
+
+scale_colour_distiller() is for colouring by a numeric variable 
+
+Exercise 1. Consider a data set on Covid 19 cases in counties across the United States. For each county, we have the following variables:
+
+number of cases
+change in the number of cases from the previous week of the year (negative if cases have decreased, positive if cases have increased)
+whether the county voted Republican or Democrat in the most recent presidential election
+population population change in the last decade (a 1.2% change would indicate that the population in the county increased by 1.2%)
+Now suppose that you want to construct map of the counties, filling the area of the county with one of the variables.
+
+For the number of cases variable, would you use a sequential, diverging, or qualitative fill colour scale?
+sequential -> pale color for low cases, vibran for high
+
+For the change in the number of cases variable, would you use a sequential, diverging, or qualitative fill colour scale?
+diverging -> pale for no change
+
+For the political party variable, would you use a sequential, diverging, or qualitative fill colour scale?
+qualitative -> 
+
+For the percent population change variable, would you use a sequential, diverging, or qualitative fill colour scale?
+diverging
+
+Exercise 2. Read the examples section of the Help file for ?scale_colour_viridis_d and examine the difference between scale_colour_viridis_d(), ?scale_colour_viridis_c(), and scale_colour_viridis_b(). Explain what the difference is between the three functions.
+```{r}
+library(palmerpenguins)
+ggplot(data = penguins, aes(x=bill_length_mm, y = bill_depth_mm, colour = body_mass_g)) +
+  geom_point()
+
+# fill categorical vars
+ggplot(data = penguins, aes(x=bill_length_mm, y = bill_depth_mm, colour = body_mass_g)) +
+  geom_point() +
+  scale_colour_viridis_d()
+
+# color for quant variable
+ggplot(data = penguins, aes(x=bill_length_mm, y = bill_depth_mm, colour = body_mass_g)) +
+  geom_point() +
+  scale_colour_viridis_c
+
+# bins the continous var and then colors by set of categorical bins
+ggplot(data = penguins, aes(x=bill_length_mm, y = bill_depth_mm, colour = body_mass_g)) +
+  geom_point() +
+  scale_colour_viridis_b()
+  
+```
+
+Exercise 3. 
+```{r}
+ggplot(data = hpi_df, aes(x = Footprint, y = Wellbeing, colour = Region)) +
+  geom_point() +
+  theme(plot.background = element_rect("hotpink"),
+        axis.text = element_text(colour = "aquamarine"))
+```
+

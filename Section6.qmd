@@ -1,0 +1,269 @@
+---
+title: "Section6"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+
+```{r}
+library(maps)
+library(tidyverse)
+state_df <- ggplot2::map_data("state")
+```
+
+```{r}
+ggplot(data = state_df,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon() 
+```
+
+```{r}
+ggplot(data = state_df,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(colour = "black", fill = "white") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme_void()
+```
+
+```{r}
+library(usdata)
+state_stats
+```
+
+```{r}
+state_stats <- state_stats |> mutate(state = str_to_lower(state))
+state_full <- left_join(state_df, state_stats, by = c("region" = "state"))
+
+ggplot(data = state_full, aes(x = long, y = lat, group = group)) +
+  geom_polygon(colour = "black", aes(fill = coal)) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme_void() +
+  scale_fill_viridis_b()
+```
+
+## Exercise 1.
+An example that comes to my mind is a graph showing changes over time in unemployment rates across the US states, exposing those states that have experienced the largest increases or decreases. When thinking about this data it is spatial, but a line plot works better than a map so we can observe trends over time and its direction. Making geography not the main and crucial thing. Probably a map will requiremore to show all of this.
+
+## Exercise 2.
+A map makes sense for variables such as metal production of homeownership rates based on state. For the metal (or any other material) production, the pattern in the map tells a story, some regions will have higher concentration, those clusters in the map help explain the use of natural resources and  also sustainability of those specific regions. In the homeownership case the concentration varies based on the market, how urban the area is, policies and a map helps understand these patterns.
+
+Maps are not as appropriate when it comes to median income or rate of unemployment since the main goal is to compare or set a rank. In the case we want to know which states have the highest or lowest values, it would be more useful to have a bar chart or a dot plot. If we use a map, colors are hard to distinguish, and also large states will draw attention and not help for interpretation of the audience. 
+
+## Exercise 3
+```{r}
+state_stats = state_stats |>
+  mutate(pop_change = (pop2010 - pop2000)/pop2000 *100)
+
+state_full = left_join(state_df, state_stats,
+                       by = c("region" = "state"))
+ggplot(data = state_full, aes(x = long, y = lat, group = group)) +
+  geom_polygon(colour = "black", aes(fill = pop_change)) +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme_void() +
+  scale_fill_viridis_b()
+```
+We observe Nevada with the fastest population growth, followed by Arizona, Utah and Idaho. 
+
+## Exercise 4
+A sequential color scale is the most appropriate option for this map. Since we are mapping a percentage change in population, and since we dont have any negative changes, we are showing progression from small to high growth, which is the main purpose of a sequential scale. The scale_fill_viridis_b() is perfect for this case and does not need a change.
+
+Side note: I think Hawaii and Alaska would look very small and be hard to read in the case we add them.
+
+```{r}
+active <- read_csv("https://raw.githubusercontent.com/iramler/stlawu_covid/main/slc_towns_active_cases.csv", n_max = 34)
+tcases <- read_csv("https://raw.githubusercontent.com/iramler/stlawu_covid/main/slc_towns_total_cases.csv", n_max = 34)
+
+active_long <- active |> pivot_longer(5:ncol(active), names_to = "date",
+                                       values_to = "cases")
+## repeat for total cases
+tcases_long <- tcases |> pivot_longer(5:ncol(tcases), names_to = "date",
+                                       values_to = "cases")
+
+library(lubridate)
+covid_df <- left_join(tcases_long, active_long,
+                      by = c("date", "Order", "NAME")) |>
+  mutate(date = mdy(date)) |>
+  rename(total_cases = cases.x,
+         active_cases = cases.y) |>
+  mutate(total_cases = if_else(is.na(total_cases),
+                               true = 0, false = total_cases),
+         active_cases = if_else(is.na(active_cases),
+                                      true = 0, false = active_cases))
+  
+
+covid_SLC <- covid_df |> filter(NAME == "St. Lawrence County")
+covid_sub <- covid_df |> filter(NAME != "St. Lawrence County")
+
+covid_sub
+covid_SLC
+covid_df
+
+```
+
+Exercise 1. Make a line plot that shows the number of active_cases in all of St. Lawrence County over time.
+
+But suppose that we now want to make a map of the current day’s active cases in the subregions of SLC. We need to tell R how to draw the lines that define the different subregions of SLC. To do so, we need to provide R with a shapefile that has directions on how to draw the spatial polygons.
+
+```{r}
+ggplot(data = covid_SLC, aes(date,y = active_cases))
+```
+
+```{r}
+library(sf)
+shp <- read_sf("data/SLC_Civil_Boundaries_SHP/slc.shp") |>
+  st_transform(st_crs("+proj=longlat"))
+
+ggplot(data = shp) +
+  geom_sf() +
+  theme_void()
+
+shp
+
+# it looks like a tibble, similar structure 
+# polygon because this is polygonal county data
+# bounding box: if you drew a rectangle with coordinates, containing slc
+# crs = coordinate reference system = longitude/latitude
+# geometry contains a bunch of x y coordinates that correspond to vertices of a particular county
+```
+
+
+```{r}
+full_df <- left_join(shp, covid_sub, by = "NAME") |>
+  filter(date == max(date)) ## only plot cases on the most recent date
+
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void()
+```
+
+Exercise 2. Change the fill scale of the plot. Should you use an unordered, sequential, or diverging scale?
+```{r}
+# sequential -> increasing cases 
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+   scale_fill_viridis_c()
+```
+
+Exercise 3. Change the colour scale so that active_cases are put into different bins with scale_fill_viridis_b(). What are some advantages and disadvantages of this?
+```{r}
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+   scale_fill_viridis_b()
+```
+
+advantages: we can observe a difference in colors more clear but it is not obvious which one is the one with highest case base only on color, it is not obvious. 
+
+Exercise 4. Explore the ?geom_sf_text() function and add the actual number of cases to the subregions in the plot, as was done on the SLC website.
+```{r}
+ggplot(data = full_df) +
+  geom_sf(aes(fill = active_cases)) +
+  theme_void() +
+   scale_fill_viridis_c() +
+  geom_sf_text(aes(label = active_cases))
+```
+
+
+```{r}
+load(here::here("data/election_2020.rda"))
+election_2020
+
+```
+
+Exercise. Construct a map of the per_gop variable, the proportion of people in the county who voted for Trump in 2020. What colour scale makes sense here? Careful: there are a lot of counties so making a plot will take a while!
+
+```{r}
+ggplot(election_2020) +
+  geom_sf(aes(fill = per_gop), linewidth = 0) +
+  theme_void() +
+  scale_fill_viridis_c(limits = c(0, 1), labels = scales::percent)
+
+
+ggplot(election_2020) +
+  geom_sf(aes(fill = per_gop), linewidth = 0) +
+  theme_void() +
+  scale_fill_gradient2(
+    midpoint = 0.5,
+    limits = c(0, 1),
+    labels = scales::percent
+  )
+
+ggplot(election_2020) +
+  geom_sf(aes(fill = per_gop)) +
+  theme_void() +
+  scale_fill_distiller(type= "seq", palette = "Reds", direction = 1)
+
+```
+
+```{r}
+load(here::here("data/ozone.rda"))
+ozone
+
+ggplot(ozone, aes(x = lon, y = lat)) +
+  geom_point(aes(colour = ozone)) +
+  coord_fixed()+
+  theme_void()+
+  scale_colour_viridis_c()
+# tigris helps with state boundaries 
+
+# comapring average ozone measurements from the two sources would be harder to see with a map (easier to see with boxplots or faceted histograms)
+```
+
+```{r}
+baseball_soto <- read_csv("data/baseball_soto25.csv") |>
+  relocate(plate_x, plate_z, type, pitch_type)
+
+ggplot(baseball_soto, aes(x = plate_x, y= plate_z)) +
+  geom_point(aes(colour = type)) +
+  theme_minimal()+
+  scale_colour_viridis_d()+
+  geom_vline(xintercept = -0.83333, linetype = "dashed")+
+    geom_vline(xintercept = 0.83333, linetype = "dashed")+
+  facet_wrap(~pitch_type)
+
+# we are adding a strike zone
+  
+
+```
+
+
+
+Exericse 1. Make a map of a variable of your choosing. In coord_map(), use projection = "mercator", which is also the default (we will see in a later exercise that this probably is not the best choice).
+
+Hint: in ggplot2’s map_data() function, there is a built in map of the "world".
+
+Hint: You can read more about projections in Section 17.3.2 of Modern Data Science with R
+
+```{r}
+library(tidyverse)
+library(here)
+hpi_df <- read_csv(here("data/hpi-tidy.csv")) 
+
+world = map_data("world") +
+  
+
+ggplot(world, aes(x = long, y = lat, group = group)) +
+  geom_polygon() +
+  coord_map(projection = "mercator") 
+
+  
+
+# add world to the hpi data 
+world_hpi = mutate(Country == if_else(Country == "United States of America",
+                            true = "USA",
+                            false = Country))+ left_join(world,hpi_df, join_by(region == Country)) 
+
+ggplot(world_hpi, aes(fill = GDPcapita)) +
+  geom_polygon(color = "grey2", linewidth = 0.5) +
+  coord_map(projection = "gilbert") +
+  theme_void() +
+  labs(fill = "hpiRank")+
+  scale_fill_viridis_c()
+
+```
+
+Exercise 2. You may notice that the United States does not get coloured in your map. Examine this issue further and fix the map so that the United States is coloured.

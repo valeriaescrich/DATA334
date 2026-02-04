@@ -1,0 +1,44 @@
+---
+title: "01_Take-Home"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+## Statement of Integrity: 
+“All work presented is my own, and I have followed all rules for collaboration. If I used any AI on this assignment, I have clearly stated both (1) what my search prompt was and (2) what I used from the AI answer.”” Valeria Escrich
+
+## Question 1.
+Group 5. The trend of this group is the easiest one to observe, specifically becaise it has a stable baseline (in this case, the x axis), we can analyse and observe the changes thanks to the position in the same scale, which as we have read is the most accurate way of comparing values over time. 
+
+## Question 2.
+### a. 
+We should use a diverging colour scale, because in this case we can perfectly expose the difference between those states in which the cases went up and those where it went down, and having a neutral color in the middle showing no change or a slight one.
+
+### b.
+For this scenario, what works best is a sequential color scale, since we can observe the number of cases going from low to high, and color will reflect this intensity in one direction. 
+
+## Question 3.
+### a.
+The histogram is the most suitable option, since it shows the distribution of the scores students in our class achieved around the average, uncovering clusters, spread and if the mean of 85 is typical or a result of being influenced by the outliers.
+
+### b. 
+Like I mentioned in my previous response, it shows the distribution of our scores, not only the average. We can observe the spread of the exam scores, in a sense if a lot of the poeple from the class scored close to 85 or if it was widely scattered, also if there is any skewness, for example a lot of low scores dragging the average down or viceversa. Also the number of clusters, or outliers. in general it unveils if our average of 85 is typical or there are many differences in our performance in the assessment.
+
+## Question 4.
+### Pair 1
+The parameter that changed is <GEOM_FUNCTION>, the top graph uses points for each data point, and the bottom graph uses boxplots, helping to show a statistical summary of the dataset.
+
+### Pair 2
+The difference is <COORDINATE_FUNCTION>, because even thoigh both plots are geom_violin and same aes(), only one of them uses default Cartesian coordinates and the other one flips the axes, meaning the only thing that changed is the datas orientation but not its summary or way of being mapped. 
+
+### Pair 3
+For this pair it is <POSITION>, the bottom graph adds a jittering, making the each players home run totals do not overlap, and in the top graph we observe the points with no jitters, but everything else remains the same.
+
+## Question 5.
+###. a. 
+Plot 1 is the best one since it possess a meaningful baseline avoiding exaggerations in differences in lollipop lengths, which is the case with Plot 2.
+
+### b.
+In this case plot 1 is the best option because the facets separates positions and they all have common scales, making each distribution easier to compare. Plot 2 has many lines, overloading visuals and it is hard to interpret.
+

@@ -1,0 +1,165 @@
+---
+title: "Section 5"
+author: "Valeria Escrich"
+format: 
+  html:
+    embed-resources: true
+---
+```{r}
+library(tidyverse)
+hpi_df <- read_csv("https://raw.githubusercontent.com/highamm/ds234_quarto/main/data_online/hpi-tidy.csv")
+hpi_df
+
+```
+
+# Notes
+- We can pass to smaller data frame onto geom_text() or geom_text_repel(), helps that one point get labeled
+
+- To highlight a labeled point we add a second geom_point() with shape = 1 (overlapping with different colors)
+
+- Labs() is of great use to polish our plotr, with title/subtitle/caption/axis labels, and themes! like theme_minimal()
+
+## Exercise 1: For each of the core dplyr functions mutate(), arrange(), select(), slice(), filter(), group_by(), and summarise(), write a one sentence summary of the overall purpose of the function.
+mutate(): adds or transforms variables but preserves same rows
+arrange(): sorts the rows according to a variable select():keeps and at the same time drops specific columns
+slice():keeps rows based on their position
+filter():based on a specified condition, those rows will be kept
+group_by():organizes by groups
+summarise(): reduces each group to summary statistucs
+
+## Exercise 2: Review mutate(). Create a new variable in hpi_df that is equal to Wellbeing / Footprint.
+```{r}
+hpi_df|>
+  mutate(wb_per_fp = Wellbeing/Footprint)
+hpi_df
+```
+
+
+## Exercise 3: Review mutate() and case_when(). Create a new variable in hpi_df that is equal to "80s" if LifeExp is in the 80’s, "70s" if LifeExp is in the 70s, and "Below 70" if LifeExp is less than 70.
+```{r}
+hpi_df |>
+  mutate(lifexp_levels = case_when(
+    LifeExpectancy >= 80 ~ "80s",
+    LifeExpectancy >= 70 ~ "70s",
+    TRUE ~ "Below 70"
+  ))
+
+# i had to pull out my worsheets from 234...this one was hard to recall
+```
+
+
+## Exercise 4. Review arrange(). Sort the hpi_df data so that the country with the highest LifeExp is in the first row and the country with the lowest LifeExp is in the last row.
+```{r}
+hpi_df |>
+  arrange(desc(LifeExpectancy))
+```
+
+
+## Exercise 5. Review select(). Make a data frame from hpi_df that only has the variables Country and LifeExp.
+```{r}
+hpi_cnl = hpi_df |>
+  select(Country, LifeExpectancy)
+hpi_cnl
+```
+
+## Exercise 6. Review slice(). Make a data frame from hpi_df that only has the first 5 rows.]
+```{r}
+hpi_15 = hpi_df|>
+  slice(1:5)
+hpi_15
+```
+
+
+## Exercise 7. Review filter(). Make a data frame from hpi_df that only has countries in the "Western World" Region.
+```{r}
+hpi_W = hpi_df|>
+  filter(Region == "Western World")
+hpi_W
+```
+
+
+## Exercise 8. Review filter(). Make a data frame from hpi_df that only has countries with a LifeExp less than 55.
+```{r}
+hpi_lowexp = hpi_df|>
+  filter(LifeExpectancy<55)
+hpi_lowexp
+```
+
+
+## Exercise 9. Review group_by() and summarise(). Make a table of the number of countries in each Region. (Hint: recall that the n() function is the counting function in dplyr).
+```{r}
+countries_region = hpi_df |>
+  group_by(Region)|>
+  summarise(n_countries = n())|>
+  arrange(desc(n_countries))
+countries_region
+```
+
+
+## Exercise 10. Review group_by() and summarise(). Make a table with the maximum LifeExp in each Region.
+```{r}
+max_life = hpi_df|>
+  group_by(Region)|>
+  summarise(max_lifeexp = max(LifeExpectancy, na.rm = TRUE)) |>
+  arrange(desc(max_lifeexp))
+
+max_life
+```
+
+# 5.3 
+## Exercise 2. You may have used a SLU majors data set in DATA/STAT 234, but now, we will use a data set that is a little different in that it shows the major/minor combination of each student. That is, instead of each row being a major, each row is an individual student. This allows us to look at more detailed questions about what students tend to double-major or minor in. The data was obtained from Christine Zimmerman in SLU’s Institutional Research Office and contains data on all graduating students in the past 7 years.
+
+The variables in the data set are:
+
+adm_id, a unique ID assigned to each student,
+sex, the sex of the student,
+major1, major2, major3, minor1, minor2, minor3, the majors and minors of the student.
+```{r}
+library(tidyverse)
+library(readxl)
+library(here)
+df <- read_excel(here::here("data/slu_graduates_17_25.xlsx"))
+
+## one row per student
+df
+
+## fixes error in the data
+df <- df |> mutate(across(everything(),
+                          .fns = ~replace(., . ==  "STATS" , "STAT")))
+
+majors_long <- df |> select(-starts_with("minor")) |>
+  pivot_longer(starts_with("major"), names_to = "major_num",
+               values_to = "major") |>
+  filter(!is.na(major))
+
+## double majors now are in two rows
+majors_long
+```
+
+
+Using this data set, construct a visualization(lollipop plot) that explores gender balance within each of the majors at SLU. We will begin this exercise by sketching out what we want to create as a class. Create indicator variable for sex( 1 for male, 0 for female) also mean of an indicator variable gives the proportion of 1s.
+
+Suppose that we want to present our visualization to members of the MCSSDS department. How can we modify this visualization to be tailored to this particular audience?
+```{r}
+majors_gende = majors_long |>
+  mutate(male_ind = if_else(sex == "M", 1, 0)) |>
+  group_by(major) |>
+  summarise(
+    prop_male = mean(male_ind),
+    n_students = n()) |>
+  filter(n_students >=45)|>
+  mutate(major = fct_reorder(major, prop_male)) |>
+  mutate(mcssds_var = if_else(major %in% c("CS", "STAT", "MATH","EC_MA"),
+                              true = "mcss",
+                              false ="other"))
+  
+
+ggplot(data = majors_gende, aes(x=prop_male, y = major, colour = mcssds_var, size = mcssds_var)) +
+  geom_segment(aes(yend = major, x = 0, xend = prop_male), show.legend = FALSE) +
+  geom_point(show.legend = FALSE)+
+  theme_minimal()+
+  scale_colour_manual(values = c("hotpink","grey60")) +
+  scale_size_manual(values = c(2,1)) 
+ 
+```
+
